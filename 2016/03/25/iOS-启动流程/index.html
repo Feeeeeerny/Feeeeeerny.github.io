@@ -57,15 +57,30 @@
 
 
 
-<meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Feeeeeerny's blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="我们一般知道app程序入口从执行main函数开始，但其实在main函数之前程序做了很多工作。我们看下面这个图：
+
+从图中我们可以看到执行main函数之前大概有两部分先要完成。一部分是Kernel内核干的事情，图中列举了些关键节点，详细流程可参考这篇文章，从设置线程入口-dyld开始就是第二部分动态链接器干的事情。
+Kernel内核启动简单来说，app由系统内核引导启动，Kernel内核做好所有准备">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS:App启动流程">
+<meta property="og:url" content="http://yoursite.com/2016/03/25/iOS-启动流程/index.html">
 <meta property="og:site_name" content="Feeeeeerny's blog">
-<meta property="og:description">
+<meta property="og:description" content="我们一般知道app程序入口从执行main函数开始，但其实在main函数之前程序做了很多工作。我们看下面这个图：
+
+从图中我们可以看到执行main函数之前大概有两部分先要完成。一部分是Kernel内核干的事情，图中列举了些关键节点，详细流程可参考这篇文章，从设置线程入口-dyld开始就是第二部分动态链接器干的事情。
+Kernel内核启动简单来说，app由系统内核引导启动，Kernel内核做好所有准备">
+<meta property="og:image" content="http://7xsohh.com2.z0.glb.clouddn.com/%E5%86%85%E6%A0%B8.png">
+<meta property="og:image" content="http://7xsohh.com2.z0.glb.clouddn.com/%E5%8A%A8%E6%80%81%E5%BA%93.png">
+<meta property="og:image" content="http://7xsohh.com2.z0.glb.clouddn.com/%E6%A0%88.png">
+<meta property="og:image" content="http://7xsohh.com2.z0.glb.clouddn.com/%E7%B1%BB%E6%96%B9%E6%B3%95%E9%A1%BA%E5%BA%8F.png">
+<meta property="og:updated_time" content="2016-04-06T14:38:36.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Feeeeeerny's blog">
-<meta name="twitter:description">
+<meta name="twitter:title" content="iOS:App启动流程">
+<meta name="twitter:description" content="我们一般知道app程序入口从执行main函数开始，但其实在main函数之前程序做了很多工作。我们看下面这个图：
+
+从图中我们可以看到执行main函数之前大概有两部分先要完成。一部分是Kernel内核干的事情，图中列举了些关键节点，详细流程可参考这篇文章，从设置线程入口-dyld开始就是第二部分动态链接器干的事情。
+Kernel内核启动简单来说，app由系统内核引导启动，Kernel内核做好所有准备">
+<meta name="twitter:image" content="http://7xsohh.com2.z0.glb.clouddn.com/%E5%86%85%E6%A0%B8.png">
 
 
 
@@ -83,7 +98,7 @@
   };
 </script>
 
-  <title> Feeeeeerny's blog </title>
+  <title> iOS:App启动流程 | Feeeeeerny's blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -104,9 +119,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -183,9 +196,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -205,10 +218,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/03/25/iOS-启动流程/" itemprop="url">
-                  iOS:App启动流程
-                </a>
+                iOS:App启动流程
               
             
           </h1>
@@ -247,9 +257,7 @@
       
 
       
-        
-          
-            <p>我们一般知道app程序入口从执行main函数开始，但其实在main函数之前程序做了很多工作。我们看下面这个图：</p>
+        <p>我们一般知道app程序入口从执行main函数开始，但其实在main函数之前程序做了很多工作。我们看下面这个图：</p>
 <p><img src="http://7xsohh.com2.z0.glb.clouddn.com/%E5%86%85%E6%A0%B8.png" alt="tupian"></p>
 <p>从图中我们可以看到执行main函数之前大概有两部分先要完成。一部分是Kernel内核干的事情，图中列举了些关键节点，详细流程可参考<a href="http://oncenote.com/2015/06/01/How-App-Launch/" target="_blank" rel="external">这篇文章</a>，从设置线程入口-dyld开始就是第二部分动态链接器干的事情。</p>
 <h3 id="Kernel内核启动"><a href="#Kernel内核启动" class="headerlink" title="Kernel内核启动"></a>Kernel内核启动</h3><p>简单来说，app由系统内核引导启动，Kernel内核做好所有准备最后会得到线程入口点（main入口），但是线程并不会立即进入这个入口点，这是因为我们还会加载动态链接器（dyld），dyld会先将此入口点保存下来，再设置入口点为dyld的入口，等到动态链接器加载完所有库等工作之后再将入口点设置回去，然后程序开始执行main函数。</p>
@@ -296,12 +304,12 @@
 </code></pre><h3 id="启动时类的方法调用顺序"><a href="#启动时类的方法调用顺序" class="headerlink" title="启动时类的方法调用顺序"></a>启动时类的方法调用顺序</h3><p>额，最后先贴张类的方法调用顺序，忘记了可以看看 = =</p>
 <p><img src="http://7xsohh.com2.z0.glb.clouddn.com/%E7%B1%BB%E6%96%B9%E6%B3%95%E9%A1%BA%E5%BA%8F.png" alt=""></p>
 
-          
-        
       
     </div>
 
     <div>
+      
+        
       
     </div>
 
@@ -312,16 +320,15 @@
 
       
       
-        <div class="post-eof"></div>
-      
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -329,6 +336,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -348,8 +359,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/default_avatar.jpg"
@@ -386,6 +406,23 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kernel内核启动"><span class="nav-number">1.</span> <span class="nav-text">Kernel内核启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动态链接器（dyld）"><span class="nav-number">2.</span> <span class="nav-text">动态链接器（dyld）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#main函数"><span class="nav-number">3.</span> <span class="nav-text">main函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动时类的方法调用顺序"><span class="nav-number">4.</span> <span class="nav-text">启动时类的方法调用顺序</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
       
 
     </div>
@@ -470,6 +507,167 @@
   
 
   
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.scheme !== 'Pisces' && (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always')) {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
 
   
 
