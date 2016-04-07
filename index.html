@@ -143,7 +143,7 @@
             
               <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
             
-            Home
+            Startseite
           </a>
         </li>
       
@@ -153,7 +153,7 @@
             
               <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
             
-            Archives
+            Archiv
           </a>
         </li>
       
@@ -219,7 +219,7 @@
             <span class="post-meta-item-icon">
               <i class="fa fa-calendar-o"></i>
             </span>
-            <span class="post-meta-item-text">Posted on</span>
+            <span class="post-meta-item-text">Veröffentlicht am</span>
             <time itemprop="dateCreated" datetime="2016-03-25T19:30:20+08:00" content="2016-03-25">
               2016-03-25
             </time>
@@ -249,12 +249,12 @@
       
         
           
-            <p>我们一般知道app程序入口从执行main函数开始，但其实在main函数之前程序做了很多工作。我们看下面这个图：</p>
+            <p>我们一般知道 App 程序入口从执行main函数开始，但其实在main函数之前程序做了很多工作。我们看下面这个图：</p>
 <p><img src="http://7xsohh.com2.z0.glb.clouddn.com/%E5%86%85%E6%A0%B8.png" alt="tupian"></p>
 <p>从图中我们可以看到执行 main 函数之前大概有两部分先要完成。一部分是 Kernel 内核干的事情，图中列举了些关键节点，详细流程可参考<a href="http://oncenote.com/2015/06/01/How-App-Launch/" target="_blank" rel="external">这篇文章</a>，从<code>设置线程入口-dyld</code>开始就是第二部分动态链接器干的事情。</p>
 <h3 id="Kernel内核启动"><a href="#Kernel内核启动" class="headerlink" title="Kernel内核启动"></a>Kernel内核启动</h3><p>简单来说，App由系统内核引导启动，Kernel内核做好所有准备最后会得到线程入口点（main入口），但是线程并不会立即进入这个入口点，这是因为我们还会加载动态链接器（dyld），dyld会先将此入口点保存下来，再设置入口点为 dyld 的入口，等到动态链接器加载完所有库等工作之后再将入口点设置回去，然后程序开始执行main函数。</p>
 <h3 id="动态链接器（dyld）"><a href="#动态链接器（dyld）" class="headerlink" title="动态链接器（dyld）"></a>动态链接器（dyld）</h3><ol>
-<li><p>加载动态库<br> <code>dyld</code> 是apple的动态链接器，iOS中所有系统 framework 都是动态链接的，在执行我们写的代码之前，动态链接器需要加载完所有动态库的准备工作。</p>
+<li><p><strong>加载动态库</strong><br> <code>dyld</code> 是apple的动态链接器，iOS中所有系统 framework 都是动态链接的，在执行我们写的代码之前，动态链接器需要加载完所有动态库的准备工作。</p>
 <p> 这个是在 Xcode 中看到的 Link 列表</p>
 <p> <img src="http://7xsohh.com2.z0.glb.clouddn.com/%E5%8A%A8%E6%80%81%E5%BA%93.png" alt=""><br> 这些framework将会在动态链接过程中被加载。</p>
 <p> 系统使用动态链接库有几点好处：</p>
@@ -267,10 +267,10 @@
 </li>
 </ul>
 </li>
-<li><p>共享缓存</p>
+<li><p><strong>共享缓存</strong></p>
 <p> 当构建一个程序时，将会链接各种各样的库，他们又会依赖一些其他的 framework 和动态库，需要加载的动态库将会非常多，这样解析会花掉很多时间，一般是好几秒钟，因此为了缩短这个时间，在OS X和iOS上动态链接器使用了共享缓存，共享缓存位于/var/db/dyld/。对于每一种架构，操作系统都有一个单独的文件，文件中包含了绝大多数的动态库，这些库都已经链接为一个文件，并且已经处理好了它们之间的符号关系。当加载一个 <code>Mach-O</code> 文件 (一个可执行文件或者一个库) 时，动态链接器首先会检查 共享缓存 看看是否存在其中，如果存在，那么就直接从共享缓存中拿出来使用。每一个进程都把这个共享缓存映射到了自己的地址空间中。这样就大大优化了 OS X 和 iOS 上程序的启动时间。</p>
 </li>
-<li><p>加载类、方法等符号</p>
+<li><p><strong>加载类、方法等符号</strong></p>
 <p> 这里我们用到上图栈中的 <code>ImageLoader</code> ，但是这里的image不是图片的意思，而是一个二进制文件，里面是被编译过的符号、代码等。所以ImageLoader作用是将这些文件加载进内存，且每一个文件对应一个 ImageLoader 实例来负责加载。简单的说 <code>ImageLoader</code> 和 <code>dyld</code>，<code>runtime</code> 配合将类加载进内存，调用顺序:</p>
 <ul>
 <li>dyld开始将程序二进制文件初始化</li>
@@ -281,7 +281,7 @@
 </li>
 </ul>
 </li>
-<li><p>+load 和+initialize</p>
+<li><p><strong>+load 和+initialize</strong></p>
 <p> 上面提到 runtime 回调处理 image 时，会遍历所有加载进来的Class，调用 Class 的 load 方法，那么可以知道，所有 Class 的 load 方法都是在 main 函数之前被调用的，且只会被调用一次。注意，这里调用 load 方法是直接使用函数内存地址 <code>(*load_method)(cls,SEL_load)</code> ，而不是使用发送消息 <code>objc_msgSend</code> 的方式，所以如果子类没有实现 load 方法，那么也不会去调用父类的 load 方法的。<br>+initialize 方法是在类或它的子类收到第一条消息之前调用的，就是说可能永远不会被调用。调用这个方法是使用 objc_msgSend 的，所以子类若未实现该方法，会调用父类的方法。<br>关于这两个方法网上资料很多，可参考源码和雷神的<a href="http://blog.leichunfeng.com/blog/2015/05/02/objective-c-plus-load-vs-plus-initialize/" target="_blank" rel="external">这篇文章</a></p>
 </li>
 </ol>
@@ -295,6 +295,7 @@
 7. 显示窗口。
 </code></pre><h3 id="启动时类的方法调用顺序"><a href="#启动时类的方法调用顺序" class="headerlink" title="启动时类的方法调用顺序"></a>启动时类的方法调用顺序</h3><p>额，最后先贴张类的方法调用顺序，忘记了可以看看 = =</p>
 <p><img src="http://7xsohh.com2.z0.glb.clouddn.com/%E7%B1%BB%E6%96%B9%E6%B3%95%E9%A1%BA%E5%BA%8F.png" alt=""></p>
+<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><p><a href="http://blog.sunnyxx.com/2014/08/30/objc-pre-main/" target="_blank" rel="external">http://blog.sunnyxx.com/2014/08/30/objc-pre-main/</a><br><a href="http://oncenote.com/2015/06/01/How-App-Launch/" target="_blank" rel="external">http://oncenote.com/2015/06/01/How-App-Launch/</a><br><a href="http://www.cnblogs.com/dsxniubility/p/4322525.html" target="_blank" rel="external">http://www.cnblogs.com/dsxniubility/p/4322525.html</a></p>
 
           
         
@@ -361,7 +362,7 @@
           <div class="site-state-item site-state-posts">
             <a href="/archives">
               <span class="site-state-item-count">1</span>
-              <span class="site-state-item-name">posts</span>
+              <span class="site-state-item-name">Artikel</span>
             </a>
           </div>
           
@@ -409,7 +410,7 @@
 </div>
 
 <div class="powered-by">
-  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+  Erstellt mit  <a class="theme-link" href="http://hexo.io">Hexo</a>
 </div>
 
 <div class="theme-info">
