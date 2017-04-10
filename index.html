@@ -346,6 +346,151 @@
             
               
                 
+                <a class="post-title-link" href="/2016/10/28/Universal Links/" itemprop="url">
+                  Universal link
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-28T12:20:40+08:00" content="2016-10-28">
+              2016-10-28
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>当你的iOS应用支持 <code>universal link</code> 功能，iOS用户可以点击这个链接不用经过safari就可以直接打开你的App（已经被安装的），如果你的App没有被安装，则会在safari打开这个链接。</p>
+<p><code>Universal link</code> 给予你几个关键词，让你不用再使用 <code>URL schemes</code>.<br><code>Unique</code>：不像自定义的 <code>URL schemes</code>, <code>Universal link</code> 不能被其他apps声明，因为这是指向你的website的标准HTTP或者HTTPS链接。<br><code>Secure</code>：当用户安装了你的app，iOS系统会检查那个你向你的web服务器上传的 <code>一个文件</code>，他是用来确保你的网站允许你的App去打开这些代表它的urls。只有你可以创建和上传这个文件，所以你的网站关联到你的App是安全的。<br><code>Flexible</code>：当你的app没有被安装，<code>Universal link</code>也是起作用的。当你点击这个link时他会在safari中打开。<br><code>Simple</code>：这个link同时起作用与打开你的网站或者你的app。<br><code>Private</code>：其他的app可以直接打开你的app，而不需要知道你的app是否安装。</p>
+<blockquote>
+<p>注意<br>当用户在 <code>WKWebview</code>、 <code>UIWebView</code> 和 <code>Safari</code> 中打开这个link时，<code>Universal link</code>会直接打开你的app，除了使用 <code>openURL:</code>去打开这个link。例如那些发生在打开Mail、Messages或者其他app。<br>当一个用户正在safari中浏览你的网站并且他们在当前网页相同域名下点击了一个universal link，iOS系统会认为这个用户的最大可能性的意图是在safari中打开这个link。而如果用户在不同的域名下点击了这个universal link，那么iOS系统则会打开你的app。<br>对于那些还在使用iOS9.0系统一下的用户，点击universal link会在safari中打开你的网站。</p>
+</blockquote>
+<p>支持 <code>Universal link</code> 非常简单。以下三个步骤：</p>
+<ul>
+<li>创建一个名为 <code>apple-app-site-association</code> 的文件，这个文件包含了能被你的app所处理的 <code>JSON</code> 数据。</li>
+<li>上传这个文件到你的 <code>HTTPS web server</code>。你可以将文件放在你服务器的根目录下或者 <code>.well-known</code> 子目录下。</li>
+<li>让你的app去准备处理这些 <code>universal link</code>。<br>必须在真机下测试 <code>universal link</code>。</li>
+</ul>
+<h2 id="创建和上传Association-Fille"><a href="#创建和上传Association-Fille" class="headerlink" title="创建和上传Association Fille"></a>创建和上传Association Fille</h2><p>为了在你的网站和你的app之间创建一个安全的连接，你必须在他们之间建立一个可信任的关系。以下两步：</p>
+<ul>
+<li>上传到你的网站的 <code>apple-app-site-association</code> 文件。</li>
+<li>在你的app中添加 <code>com.apple.developer.associated-domains</code> entitlement。（这部分会在下面说到）<br>你可以在<a href="https://developer.apple.com/reference/security/shared_web_credentials" target="_blank" rel="external">Shared Web Credentials Reference</a>中学习到更多关于app如何和网站共享资源的知识。</li>
+</ul>
+<blockquote>
+<p>NOTE<br>If your app runs in iOS 9 or later and you use HTTPS to serve the apple-app-site-association file, you can create a plain text file that uses the application/json MIME type and you don’t need to sign it. If you support Handoff and Shared Web Credentials in iOS 8, you still need to sign the file as described in Shared Web Credentials Reference.</p>
+</blockquote>
+<p>你需要为你的每一个域名都提供各自的 <code>apple-app-site-association</code> 文件。例如，<code>apple.com</code> 和 <code>developer.apple.com</code> 需要不同的 <code>apple-app-site-association</code> 文件，因为这些域名服务了不停的内容。而相比之下，<code>apple.com</code> 和 <code>www.apple.cm</code> 不需要不同的文件，因为这两个域名是服务同一个内容的，但是这两个域名都不许要使文件有效。对于那些跑在 iOS 9.3.1以及之后的apps，这个文件的大小不能超过128k，不管它是否被signed。</p>
+<p>在你的 <code>apple-app-site-association</code> 文件中，你需要区分你网站链接的path，哪些是应该被处理成universal link，而哪些是不应该被处理成universla link的。保证path尽可能的短并且最大程度的支持更多的paths（扩展性）。下面代码是一个 <code>apple-app-site-association</code> 文件中需要被处理成universal link的三个paths。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    &quot;applinks&quot;: &#123;</div><div class="line">        &quot;apps&quot;: [],</div><div class="line">        &quot;details&quot;: [</div><div class="line">            &#123;</div><div class="line">                &quot;appID&quot;: &quot;9JA89QQLNQ.com.apple.wwdc&quot;,</div><div class="line">                &quot;paths&quot;: [ &quot;/wwdc/news/&quot;, &quot;/videos/wwdc/2015/*&quot;]</div><div class="line">            &#125;,</div><div class="line">            &#123;</div><div class="line">                &quot;appID&quot;: &quot;ABCD1234.com.apple.wwdc&quot;,</div><div class="line">                &quot;paths&quot;: [ &quot;*&quot; ]</div><div class="line">            &#125;</div><div class="line">        ]</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>NOTE<br>不要加.json的扩展名。</p>
+</blockquote>
+<p><code>apps</code> key必须写并且他的value一定要是一个空的array。<code>details</code> key 是一个包含dictionaries的array，每一个app支持一个dictionary。dictionary的顺序决定了系统查找的顺序，因此你可以指定使用app去处理你的网站链接的某个特殊部分。</p>
+<p>每一个dictionary包含了一个 <code>appID</code> 和 <code>paths</code>的key。appID的值是由team ID或者app ID作为前缀，然后紧接着bundle ID组成。paths的值是一个包含了一系列的字符串的array，这些字符串可以是你的网站链接的一部分，专门用作给app处理的，也可以是专门不想给app处理的。如果想要说明不能被处理成Universal link，只需要在path前面加上 <code>NOT</code> 即可。例如，我们可以把上面例子中的 <code>/videos/wwdc/2010/*</code> 变成如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&quot;paths&quot;: [ &quot;/wwdc/news/&quot;, &quot;NOT /videos/wwdc/2010/*&quot;, &quot;/videos/wwdc/201?/*&quot;]</div></pre></td></tr></table></figure></p>
+<p>因为系统去评估每一个path是按照顺序来的，所以当匹配到正面的或者负面的path时，就停止后续的检查了，所以你应该将高优先级的path放到低优先级的path前面。注意，只有URL中的path组件才会被比较。其他的组件，例如query或者fragment标识都会被忽略。</p>
+<p>这里有很多种方法去具体说明在文件中的paths，例如：</p>
+<ul>
+<li>使用 <code>*</code> 去说明整个网站</li>
+<li>包含一个特定的URL，例如 <code>/wwdc/news</code>，去说明一个特定的link</li>
+<li>在一个特定URL后拼接 <code>*</code>，例如 <code>/videos/wwdc/2015/*</code>，去说明你网站的一个组<br>除了使用 <code>*</code> 去匹配任意的substring，也可以使用 <code>?</code> 去匹配任意的单个字符。你可以结合使用这两个符号去表达一个path，例如 <code>/foo/*/bar/201?/mypage</code>。</li>
+</ul>
+<blockquote>
+<p>NOTE<br>你用来标识网站的paths应该是极其敏感的。</p>
+</blockquote>
+<p>当你创建完 <code>apple-app-site-association</code> 文件，上传到你的HTTPS web server的根目录下或者.well-known子目录下。这个文件需要通过HTTPS的链接例如 <code>https://&lt;domain&gt;/apple-app-site-association</code> 或者 <code>https://&lt;domain&gt;/.well-known/apple-app-site-association</code> 并且不会被重定向的去连接下载。然后你需要在你的app中处理universal link。</p>
+<h2 id="app处理universal-link"><a href="#app处理universal-link" class="headerlink" title="app处理universal link"></a>app处理universal link</h2><p>Universal link使用了两个技术点：第一个是在浏览器和app之间使用了相同的路径（机制），第二个是Shared Web Credentials（更多的信息查看<a href="https://developer.apple.com/library/content/documentation/UserExperience/Conceptual/Handoff/AdoptingHandoff/AdoptingHandoff.html#//apple_ref/doc/uid/TP40014338-CH2-SW10" target="_blank" rel="external">Web Browser–to–Native App Handoff</a>和<a href="https://developer.apple.com/reference/security/shared_web_credentials" target="_blank" rel="external">Shared Web Credentials Reference</a>）。当一个用户点击了universal link，iOS会启动你的app并且发送一个 <code>NSUserActivity</code> 对象，你的app可以可以从这个对象中解析app是怎么被启动的。</p>
+<p>为了让你的app支持universal link，遵循下面几个步骤：</p>
+<ul>
+<li>添加你的app所支持的域名</li>
+<li>当收到 <code>NSUserActivity</code> 对象时，你的app应当去处理它。</li>
+</ul>
+<p>在你的 <code>com.apple.developer.associated-domains</code> entitlement中，包含了一些列需要被当做universal link来处理的域名。你可以在xcode中的 <code>Capabilities</code> tab中，添加一个入口去搜索那些你的app所支持的域名，以 <code>applinks:</code> 为前缀，例如 <code>applinks:www.mywebsite.com</code>。这个域名个数限制在20-30个。</p>
+<p>为了匹配子域名，你可以在域名的最前面使用 <code>*</code> 通配符（前缀applinks是必须的）。举个例子，如果你使用了 <code>applinks:*.mywebsite.com</code> 和 <code>applinks:*.users.mywebsite.com</code>，那么在匹配 <code>emily.users.mywebsite.com</code> 这个域名的时候会优先去查找 <code>*.users.mywebsite.com</code> 这个入口。注意 <code>*.mywebsite.com</code> 和 <code>mywebsite.com</code> 是不一样的因为星号的前缀。为了使这两个域名都有效，你需要分别设置这两个入口。</p>
+<p>设置完以上，去实现 <code>UIApplicationDelegate</code> 的 <code>application:continueUserActivity:restorationHandler:</code> 方法，这样你的app就可以接收universal link并且去处理它了。</p>
+<p>当iOS通过用户点击universal link去启动你的app后，你的app会接受到 <code>NSUseractivity</code> 对象，它包含一个值为 <code>NSUserActivityTypeBrowsingWeb</code> 的 <code>activityType</code> 属性。这个对象的 <code>webpageURL</code> 属性包含了用户点击的URL。这个URL总是一个HTTP或者HTTPS的URL，你可以通过 <code>NSURLComponents</code> 的APIs去解析他。</p>
+<p>iOS会去检查用户最近的行为，然后去决定当用户点击了universal link后是直接打开app还是继续打开这个网站。例如，一个用户通过点击universal link打开了你的app，但是又点击了状态栏右上角的breadcrumb按钮回到了safari去浏览这个link，当用户做了这个行为，iOS会认为这个用户希望在safari中打开universal link而不是打开app，直到用户在网页中通过点击上面的Banner中的OPEN按钮去打开你的app。</p>
+<blockquote>
+<p>If you instantiate a SFSafariViewController, WKWebView, or UIWebView object to handle a universal link, iOS opens your website in Safari instead of opening your app. However, if the user taps a universal link from within an embedded SFSafariViewController, WKWebView, or UIWebView object, iOS opens your app.</p>
+</blockquote>
+<p>确保你的app是否使用了 <code>openURL:</code> 去打开一个universal link是很重要的，在这种场景下，iOS会辨识出唤起universal link的源头是来自你的app，那么因此你的app不应该将他处理成一个universal link，而是一个正常的link去打开。</p>
+<p>如果你接收到了一个无效的URL，你应该优雅的去展示这个失败。你可以使用 <code>openURL:</code> 去处理一个不被支持的URL。如果不使用这个，你可以展示一个错误页面。</p>
+<blockquote>
+<p>为了保护用户的隐私和安全，你不应该使用HTTP链接去传输一些数据，而是使用安全的传输协议例如HTTPS。</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/04/20/iOS-启动流程/" itemprop="url">
                   iOS:App启动流程
                 </a>
@@ -501,7 +646,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-count">3</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
