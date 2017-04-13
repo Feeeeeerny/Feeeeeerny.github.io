@@ -73,7 +73,7 @@ Kernel内核启动简单来说，App由系统内核引导启动，Kernel内核">
 <meta property="og:image" content="http://7xsohh.com2.z0.glb.clouddn.com/%E5%8A%A8%E6%80%81%E5%BA%93.png">
 <meta property="og:image" content="http://7xsohh.com2.z0.glb.clouddn.com/%E6%A0%88.png">
 <meta property="og:image" content="http://7xsohh.com2.z0.glb.clouddn.com/%E7%B1%BB%E6%96%B9%E6%B3%95%E9%A1%BA%E5%BA%8F.png">
-<meta property="og:updated_time" content="2017-03-29T09:19:10.000Z">
+<meta property="og:updated_time" content="2017-04-13T15:17:05.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS:App启动流程">
 <meta name="twitter:description" content="我们一般知道 App 程序入口从执行main函数开始，但其实在main函数之前程序做了很多工作。我们看下面这个图：
@@ -260,7 +260,7 @@ Kernel内核启动简单来说，App由系统内核引导启动，Kernel内核">
         <p>我们一般知道 App 程序入口从执行main函数开始，但其实在main函数之前程序做了很多工作。我们看下面这个图：</p>
 <p><img src="http://7xsohh.com2.z0.glb.clouddn.com/%E5%86%85%E6%A0%B8.png" alt="tupian"></p>
 <p>从图中我们可以看到执行 main 函数之前大概有两部分先要完成。一部分是 Kernel 内核干的事情，图中列举了些关键节点，详细流程可参考<a href="http://oncenote.com/2015/06/01/How-App-Launch/" target="_blank" rel="external">这篇文章</a>，从<code>设置线程入口-dyld</code>开始就是第二部分动态链接器干的事情。</p>
-<h3 id="Kernel内核启动"><a href="#Kernel内核启动" class="headerlink" title="Kernel内核启动"></a>Kernel内核启动</h3><p>简单来说，App由系统内核引导启动，Kernel内核做好所有准备最后会得到线程入口点（main入口），但是线程并不会立即进入这个入口点，这是因为我们还会加载动态链接器（dyld），dyld会先将此入口点保存下来，再设置入口点为 dyld 的入口，等到动态链接器加载完所有库等工作之后再将入口点设置回去，然后程序开始执行main函数。</p>
+<h3 id="Kernel内核启动"><a href="#Kernel内核启动" class="headerlink" title="Kernel内核启动"></a>Kernel内核启动</h3><p>简单来说，App由系统内核引导启动，Kernel内核做好所有准备最后会得到线程入口点（main入口），但是线程并不会立即进入这个入口点，这是因为我们还会加载动态链接器（dyld），dyld会先将此入口点保存下来，再设置入口点为 dyld 的入口，等到动态链接器加载完所有库等工作之后再将入口点设置回去，然后程序开始执行main函数。<a href="https://dazhuji.com/index.html" target="_blank" rel="external">测dsad试跳转</a></p>
 <h3 id="动态链接器（dyld）"><a href="#动态链接器（dyld）" class="headerlink" title="动态链接器（dyld）"></a>动态链接器（dyld）</h3><ol>
 <li><p><strong>加载动态库</strong><br> <code>dyld</code> 是apple的动态链接器，iOS中所有系统 framework 都是动态链接的，在执行我们写的代码之前，动态链接器需要加载完所有动态库的准备工作。</p>
 <p> 这个是在 Xcode 中看到的 Link 列表</p>
