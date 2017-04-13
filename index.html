@@ -442,7 +442,7 @@
 <p>If you instantiate a SFSafariViewController, WKWebView, or UIWebView object to handle a universal link, iOS opens your website in Safari instead of opening your app. However, if the user taps a universal link from within an embedded SFSafariViewController, WKWebView, or UIWebView object, iOS opens your app.</p>
 </blockquote>
 <p>确保你的app是否使用了 <code>openURL:</code> 去打开一个universal link是很重要的，在这种场景下，iOS会辨识出唤起universal link的源头是来自你的app，那么因此你的app不应该将他处理成一个universal link，而是一个正常的link去打开。</p>
-<p>如果你接收到了一个无效的URL，你应该优雅的去展示这个失败。你可以使用 <code>openURL:</code> 去处理一个不被支持的URL。如果不使用这个，你可以展示一个错误页面。<a href="https://dazhuji.com" target="_blank" rel="external">测试跳转</a></p>
+<p>如果你接收到了一个无效的URL，你应该优雅的去展示这个失败。你可以使用 <code>openURL:</code> 去处理一个不被支持的URL。如果不使用这个，你可以展示一个错误页面。<a href="https://dazhuji.com/index.html" target="_blank" rel="external">测dsad试跳转</a></p>
 <blockquote>
 <p>为了保护用户的隐私和安全，你不应该使用HTTP链接去传输一些数据，而是使用安全的传输协议例如HTTPS。</p>
 </blockquote>
